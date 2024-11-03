@@ -14,8 +14,8 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main', // Change this to your main branch if different
-                    url: 'git@github.com:hamzaa-Bouyahyaa/souvenirs.git', // Update with your GitHub repository URL
-                    credentialsId: 'github_jenkins_key' // Ensure this ID matches your GitHub credentials in Jenkins
+                    url: 'https://github.com/hamzaa-Bouyahyaa/souvenirs.git', // Update with your GitHub repository URL
+                    //credentialsId: 'github_jenkins_key' // Ensure this ID matches your GitHub credentials in Jenkins
             }
         }
 
