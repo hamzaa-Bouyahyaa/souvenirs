@@ -6,7 +6,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub') 
         IMAGE_NAME_SERVER = 'bzabez/server' 
-        IMAGE_NAME_CLIENT = 'bzabez/react-app' 
+        IMAGE_NAME_CLIENT = 'bzabez/client' 
         APP_VERSION = '1.0.0' // Example versioning
     }
 
@@ -88,14 +88,14 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    // Add your deployment logic here
-                    sh "kubectl apply -f k8s/deployment.yaml" // Example for Kubernetes
-                }
-            }
-        }
+        // stage('Deploy') {
+        //     steps {
+        //         script {
+        //             // Add your deployment logic here
+        //             sh "kubectl apply -f k8s/deployment.yaml" // Example for Kubernetes
+        //         }
+        //     }
+        // }
     }
 
     post {
