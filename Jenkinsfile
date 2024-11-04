@@ -4,7 +4,7 @@ pipeline {
         pollSCM('H/5 * * * *')
     }
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub') 
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub_1') 
         IMAGE_NAME_SERVER = 'bzabez/jenkins-exam-server' 
         IMAGE_NAME_CLIENT = 'bzabez/jenkins-exam-client' 
         APP_VERSION = '1.0.0'
