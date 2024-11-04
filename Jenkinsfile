@@ -5,8 +5,8 @@ pipeline {
     }
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub') 
-        IMAGE_NAME_SERVER = 'bzabez/server' 
-        IMAGE_NAME_CLIENT = 'bzabez/client' 
+        IMAGE_NAME_SERVER = 'bzabez/jenkins-exam-server' 
+        IMAGE_NAME_CLIENT = 'bzabez/jenkins-exam-client' 
         APP_VERSION = '1.0.0' // Example versioning
     }
 
