@@ -63,7 +63,7 @@ pipeline {
                 }
             }
         }
-        stage('Vulnerability Scan Client') {
+        stage('Vulnerability Scan Server') {
             steps {
                 script {
                     sh "trivy image --severity HIGH,CRITICAL ${env.IMAGE_NAME_SERVER}:${env.BUILD_NUMBER}"
