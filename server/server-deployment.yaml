@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-exam-server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: jenkins-exam-server
+  template:
+    metadata:
+      labels:
+        app: jenkins-exam-server
+    spec:
+      containers:
+        - name: jenkins-exam-server
+          image: bzabez/jenkins-exam-server:latest
+          ports:
+            - containerPort: 5000
