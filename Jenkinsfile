@@ -91,7 +91,7 @@ pipeline {
         stage('Push Images to Docker Hub') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_TOKEN')]) {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub_1', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_TOKEN')]) {
                         sh """
                             echo "\${DOCKERHUB_TOKEN}" | docker login -u "\${DOCKERHUB_USER}" --password-stdin
                             docker push ${env.IMAGE_NAME_SERVER}:${env.APP_VERSION}
