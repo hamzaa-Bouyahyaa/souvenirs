@@ -1,69 +1,38 @@
 pipeline {
-    agent any
-    triggers {
-        pollSCM('H/5 * * * *')
-    }
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub_1') 
-        IMAGE_NAME_SERVER = 'bzabez/jenkins-exam-server' 
-        IMAGE_NAME_CLIENT = 'bzabez/jenkins-exam-client' 
-        APP_VERSION = '1.0.0'
+        registryCredential = 'dockerhub_1'
+        IMAGE_NAME_SERVER = 'bzabez/jenkins-exam-server'
+        IMAGE_NAME_CLIENT = 'bzabez/jenkins-exam-client'
+        PUSH_SUCCESS = 'false' 
     }
-
+    agent any
     stages {
-        stage('Checkout') {
+        stage('Cloning Git') {
             steps {
-                // Using checkout step instead of git for better credential handling
-                checkout([$class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/hamzaa-Bouyahyaa/souvenirs.git',
-                        credentialsId: 'github_access_token'
-                    ]]
-                ])
+                checkout scm
             }
         }
-
-        // stage('Run Tests') {
-        //     steps {
-        //         // Add error handling and proper Node.js setup
-        //         nodejs(nodeJSInstallationName: 'NodeJS') {
-        //             dir('server') {
-        //                 sh '''
-        //                     npm ci
-        //                     npm test || exit 1
-        //                 '''
-        //             }
-        //             dir('client') {
-        //                 sh '''
-        //                     npm ci
-        //                     npm test || exit 1
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
-
-        stage('Build Server Image') {
+        stage('Building image server') {
             steps {
                 dir('server') {
                     script {
-                        dockerImageServer = docker.build("${env.IMAGE_NAME_SERVER}:${env.APP_VERSION}")
+                        dockerImageServer = docker.build("${env.IMAGE_NAME_SERVER}:${env.BUILD_NUMBER}")
                     }
                 }
             }
         }
 
-        stage('Build Client Image') {
+        stage('Building image client') {
             steps {
                 dir('client') {
                     script {
-                        dockerImageClient = docker.build("${env.IMAGE_NAME_CLIENT}:${env.APP_VERSION}")
+                        dockerImageClient = docker.build("${env.IMAGE_NAME_CLIENT}:${env.BUILD_NUMBER}")
                     }
                 }
             }
         }
-        stage('Vulnerability Scan Server') {
+
+        stage('Vulnerability Scan server') {
             steps {
                 script {
                     sh "trivy image --severity HIGH,CRITICAL ${env.IMAGE_NAME_SERVER}:${env.BUILD_NUMBER}"
@@ -71,55 +40,36 @@ pipeline {
             }
         }
 
-        stage('Vulnerability Scan Client') {
+        stage('Vulnerability Scan client') {
             steps {
                 script {
                     sh "trivy image --severity HIGH,CRITICAL ${env.IMAGE_NAME_CLIENT}:${env.BUILD_NUMBER}"
                 }
             }
         }
-        
-        stage('Push Images to Docker Hub') {
+
+        stage('Deploy Image') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub_1', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_TOKEN')]) {
-                        sh """
-                            echo "\${DOCKERHUB_TOKEN}" | docker login -u "\${DOCKERHUB_USER}" --password-stdin
-                            docker push ${env.IMAGE_NAME_SERVER}:${env.APP_VERSION}
-                            docker push ${env.IMAGE_NAME_CLIENT}:${env.APP_VERSION}
-                        """
+                    try {
+                        docker.withRegistry('', registryCredential) {
+                            docker.image("${env.IMAGE_NAME_SERVER}:${env.BUILD_NUMBER}").push()
+                           docker.image("${env.IMAGE_NAME_CLIENT}:${env.BUILD_NUMBER}").push()
+                            // Set the environment variable
+                            sh "echo 'true' > .push_success"
+                        }
+                    } catch (Exception e) {
+                        echo "Image push failed: ${e.getMessage()}"
+                        sh "echo 'false' > .push_success"
+                        error("Failed to push image to registry")
                     }
                 }
             }
         }
-
-        // stage('Deploy') {
-        //     steps {
-        //         script {
-        //             // Add error handling for kubectl
-        //             sh """
-        //                 if command -v kubectl > /dev/null; then
-        //                     kubectl apply -f k8s/deployment.yaml
-        //                 else
-        //                     echo "kubectl not found. Please install kubectl first."
-        //                     exit 1
-        //                 fi
-        //             """
-        //         }
-        //     }
-        // }
     }
-
     post {
-        success {
-            echo "Pipeline completed successfully"
-            // Example: Send email or Slack notification
-        }
-        failure {
-            echo "Pipeline failed"
-            // Example: Send email or Slack notification
+        always {
+            cleanWs()
         }
     }
 }
-    
-
