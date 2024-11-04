@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: jenkins-exam-server-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: jenkins-exam-server
   ports:
     - protocol: TCP
       port: 5000
       targetPort: 5000
-      nodePort: 30002
+      #nodePort: 30002
