@@ -63,23 +63,18 @@ pipeline {
                 }
             }
         }
-
-        stage('Scan Server Image') {
+        stage('Vulnerability Scan Client') {
             steps {
                 script {
-                    sh """
-                        trivy image ${env.IMAGE_NAME_SERVER}:${env.APP_VERSION}
-                    """
+                    sh "trivy image --severity HIGH,CRITICAL ${env.IMAGE_NAME_SERVER}:${env.BUILD_NUMBER}"
                 }
             }
         }
 
-        stage('Scan Client Image') {
+        stage('Vulnerability Scan Client') {
             steps {
                 script {
-                    sh """
-                        trivy image ${env.IMAGE_NAME_CLIENT}:${env.APP_VERSION}
-                    """
+                    sh "trivy image --severity HIGH,CRITICAL ${env.IMAGE_NAME_CLIENT}:${env.BUILD_NUMBER}"
                 }
             }
         }
