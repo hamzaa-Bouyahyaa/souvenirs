@@ -68,9 +68,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-                        aquasec/trivy:latest image --exit-code 0 --severity LOW,MEDIUM,HIGH,CRITICAL \
-                        ${env.IMAGE_NAME_SERVER}:${env.APP_VERSION}
+                        trivy image ${env.IMAGE_NAME_SERVER}:${env.APP_VERSION}
                     """
                 }
             }
@@ -80,9 +78,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-                        aquasec/trivy:latest image --exit-code 0 --severity LOW,MEDIUM,HIGH,CRITICAL \
-                        ${env.IMAGE_NAME_CLIENT}:${env.APP_VERSION}
+                        trivy image ${env.IMAGE_NAME_CLIENT}:${env.APP_VERSION}
                     """
                 }
             }
