@@ -102,21 +102,21 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    // Add error handling for kubectl
-                    sh """
-                        if command -v kubectl > /dev/null; then
-                            kubectl apply -f k8s/deployment.yaml
-                        else
-                            echo "kubectl not found. Please install kubectl first."
-                            exit 1
-                        fi
-                    """
-                }
-            }
-        }
+        // stage('Deploy') {
+        //     steps {
+        //         script {
+        //             // Add error handling for kubectl
+        //             sh """
+        //                 if command -v kubectl > /dev/null; then
+        //                     kubectl apply -f k8s/deployment.yaml
+        //                 else
+        //                     echo "kubectl not found. Please install kubectl first."
+        //                     exit 1
+        //                 fi
+        //             """
+        //         }
+        //     }
+        // }
     }
 
     // post {
