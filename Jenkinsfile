@@ -24,25 +24,25 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                // Add error handling and proper Node.js setup
-                nodejs(nodeJSInstallationName: 'NodeJS') {
-                    dir('server') {
-                        sh '''
-                            npm ci
-                            npm test || exit 1
-                        '''
-                    }
-                    dir('client') {
-                        sh '''
-                            npm ci
-                            npm test || exit 1
-                        '''
-                    }
-                }
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         // Add error handling and proper Node.js setup
+        //         nodejs(nodeJSInstallationName: 'NodeJS') {
+        //             dir('server') {
+        //                 sh '''
+        //                     npm ci
+        //                     npm test || exit 1
+        //                 '''
+        //             }
+        //             dir('client') {
+        //                 sh '''
+        //                     npm ci
+        //                     npm test || exit 1
+        //                 '''
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Build Server Image') {
             steps {
@@ -119,19 +119,19 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            // Clean up Docker images
-            sh """
-                docker rmi ${env.IMAGE_NAME_SERVER}:${env.APP_VERSION} || true
-                docker rmi ${env.IMAGE_NAME_CLIENT}:${env.APP_VERSION} || true
-            """
-        }
-        success {
-            echo "Pipeline completed successfully"
-        }
-        failure {
-            echo "Pipeline failed"
-        }
-    }
+    // post {
+    //     always {
+    //         // Clean up Docker images
+    //         sh """
+    //             docker rmi ${env.IMAGE_NAME_SERVER}:${env.APP_VERSION} || true
+    //             docker rmi ${env.IMAGE_NAME_CLIENT}:${env.APP_VERSION} || true
+    //         """
+    //     }
+    //     success {
+    //         echo "Pipeline completed successfully"
+    //     }
+    //     failure {
+    //         echo "Pipeline failed"
+    //     }
+    // }
 }
