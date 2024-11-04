@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: jenkins-exam-client
-          image: bzabez/jenkins-exam-client:latest
+          image: bzabez/jenkins-exam-client:15
           ports:
             - containerPort: 3000
